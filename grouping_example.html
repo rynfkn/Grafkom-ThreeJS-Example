@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Three.js Beginner</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
+    <script>
+      // --- Basic Setup ---
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 10;
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const stats = new Stats();
+      stats.showPanel(0);
+      document.body.appendChild(stats.dom);
+
+      // Buat group
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // buat kubus
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshNormalMaterial();
+
+      // Tambah 10 kubus ke dalam group
+      for (let i = 0; i < 10; i++) {
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.set(
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 5,
+          (Math.random() - 0.5) * 5
+        );
+        group.add(cube);
+      }
+      
+      function animate() {
+        stats.begin();
+        
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+
+        // tambahkan transformasi pada group
+        group.rotation.y += 0.01;
+        // group.children.forEach(element => {
+        //   element.rotation.x += 0.01;
+        // });
+
+        // group.children[0].rotation.x += 0.01;
+        stats.end();
+      }
+      animate();
+
+      // cube_outside = new THREE.Mesh(geometry, material);
+      // cube_outside.position.set(5, 0, 0);
+      // scene.add(cube_outside);
+
+    </script>
+  </body>
+</html>

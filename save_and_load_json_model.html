@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Three.js Save & Load JSON</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      const geometry = new THREE.TorusKnotGeometry(1, 0.3, 100, 16);
+      const material = new THREE.MeshNormalMaterial();
+      let mesh = new THREE.Mesh(geometry, material);
+
+      scene.add(mesh);
+      function animate() {
+        requestAnimationFrame(animate);
+        mesh.rotation.y += 0.01;
+        mesh.rotation.x += 0.005;
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      function saveModel() {
+        const json = mesh.toJSON();
+        const string = JSON.stringify(json);
+        localStorage.setItem("savedMesh", string);
+      }
+
+      function loadModel() {
+        const string = localStorage.getItem("savedMesh");
+
+        const structure = JSON.parse(string);
+        const loader = new THREE.ObjectLoader();
+
+        const loadedMesh = loader.parse(structure);
+
+        // Remove old mesh, add new one
+        scene.remove(mesh);
+        mesh = loadedMesh;
+        scene.add(mesh);
+      }
+
+      window.saveModel = saveModel;
+      window.loadModel = loadModel;
+    </script>
+
+    <button
+      onclick="saveModel()"
+      style="position: absolute; top: 20px; left: 20px"
+    >
+      Save Model
+    </button>
+
+    <button
+      onclick="loadModel()"
+      style="position: absolute; top: 60px; left: 20px"
+    >
+      Load Model
+    </button>
+  </body>
+</html>
